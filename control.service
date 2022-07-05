@@ -1,0 +1,8 @@
+[Unit]
+Description=Control
+ 
+[Service]
+ExecStart=/root/newcontrol.sh
+ 
+[Install]
+WantedBy=multi-user.target

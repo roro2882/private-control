@@ -9,7 +9,7 @@ passwordPath="${homePath}password"
 requestTimePath="${homePath}control/requestTime"
 maxMinutesPerWeek=$((5*60))
 maxMinutesPerDay=$((2,5*60))
-rootpassDelayInHours=10
+rootpassDelayInHours=1
 while true; do
 	#sleep 1m
 	sleep 1s
@@ -75,6 +75,8 @@ while true; do
 		if (( goodtime > requesttime)); then
 			pass=$(cat "$passwordPath")
 			echo "rootpasswd : $pass"> $requestPath
+			requesttime=$(date +%s)
+			echo "$requesttime" > $requestTimePath
 		fi
 
 	elif echo "$request" | grep -q "rootpasswd"; then

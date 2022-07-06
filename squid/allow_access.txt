@@ -1,0 +1,12 @@
+.google.fr
+.google.com
+.duckduckgo.com
+.unix.com
+.linuxquestions.org
+.stackoverflow.com
+.archlinux.org
+.github.com
+.mirror.
+.mirrors.
+.stackexchange.com
+.archlinux.

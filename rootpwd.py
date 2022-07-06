@@ -20,12 +20,13 @@ def decode(key, enc):
     return "".join(dec)
 def randStr(chars = string.ascii_uppercase + string.digits, N=10):
 	return ''.join(random.choice(chars) for _ in range(N))
-password = "simplepassword"
-chars = string.digits+string.ascii_letters
-N = 5
+password = "simplepasswordahahah"
+#chars = string.digits+string.ascii_letters
+chars = string.ascii_letters
+N = 6
 key = randStr(chars = chars, N=N)
 result = encode(password,key)
-print(result, key)
+print(password,result, key)
 ctime =  time.time()
 
 def test(nmax):

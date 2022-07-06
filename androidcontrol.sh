@@ -17,7 +17,7 @@ i=0
 while true; do
 	sleep 1s
 	#sleep 1s
-	if dumpsys power | grep -q "mHoldingDisplaySuspendBlocker=true"; then
+	if echo "$(dumpsys power)" | grep -q "mHoldingDisplaySuspendBlocker=true"; then
 	i=$((i+1))
 	fi
 	weektime=$(cat "$weekPath")

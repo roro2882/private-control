@@ -13,13 +13,18 @@ maxMinutesPerWeek=$((4*60))
 maxMinutesPerDay=$((1*60))
 rootpassDelayInHours=24
 wifiDelayInMinutes=30
+i=0
 while true; do
-	sleep 1m
+	sleep 1s
 	#sleep 1s
+	i=$((i+1))
 	weektime=$(cat "$weekPath")
 	daytime=$(cat "$dayPath")
-	weektime=$((weektime+1))
-	daytime=$((daytime+1))
+	if (( i%60 == 0 )); then
+		weektime=$((weektime+1))
+		daytime=$((daytime+1))
+	fi
+	i=$((i+1))
 	today=$(date +%s)
 	daylimit=$(cat "$dayTimePath")
 	weeklimit=$(cat "$weekTimePath")
@@ -28,7 +33,7 @@ while true; do
 
 	if (( today > daylimit )) ;
 	then
-		daybegins=$(date -d '+1 day 05:00' +%s)
+		daybegins=$(( today + 23*60*60 ))
 		#daybegins=$(date -d '+20 second' +%s)
 		echo "New day ! "
 		echo "$daybegins" > $dayTimePath
@@ -38,8 +43,7 @@ while true; do
 	if (( today > weeklimit ));
 	then
 		echo "New week ! "
-		weekbegins=$(date -d 'Monday' +%s)
-		#weekbegins=$(date -d '+40 second' +%s)
+		weekbegins=$(( today + 6*24*60*60))
 		echo "$weekbegins" > $weekTimePath
 		weektime=0
 	fi
@@ -80,7 +84,7 @@ while true; do
 		requesttime=$(cat "$requestTimePath")
 		if echo "$requesttype" | grep -q "root password"; then
 			echo "request root"
-			goodtime=$(date -d "-${rootpassDelayInHours} hours" +%s)
+			goodtime=$((today - rootpassDelayInHours*60*60))
 			if (( goodtime > requesttime)); then
 				pass=$(cat "$passwordPath")
 				echo "rootpasswd : $pass"> $requestPath
@@ -93,6 +97,7 @@ while true; do
 		elif echo "$requesttype" | grep -q "wifi"; then
 			echo "request wifi"
 			goodtime=$(date -d "-${wifiDelayInMinutes} minutes" +%s)
+			goodtime=$((today - wifiDelayInMinutes*60))
 			if (( goodtime > requesttime )); then
 				bash ${homePath}unblock_wifi.sh
 				echo "wifi activated">$requestPath

@@ -119,4 +119,6 @@ while true; do
 	echo "$daytime" > $dayPath
 	echo "week : $weektime day : $daytime"
 	echo "week : $weektime / $maxMinutesPerWeek day : $daytime / $maxMinutesPerDay" > $infosPath
+	echo "week : $weeklimit  day : $daylimit today : $today" >> $infosPath
 done
+

@@ -9,8 +9,8 @@ requestTimePath="${homePath}control/requestTime"
 requestTypePath="${homePath}control/requestType"
 requestPath="/home/roro/request.txt"
 infosPath="/home/roro/infos.txt"
-maxMinutesPerWeek=$((20*60))
-maxMinutesPerDay=$((5*60))
+maxMinutesPerWeek=$((15*60))
+maxMinutesPerDay=$((3*60))
 rootpassDelayInHours=3
 wifiDelayInHours=1
 while true; do
@@ -28,7 +28,7 @@ while true; do
 
 	if (( today > daylimit )) ;
 	then
-		daybegins=$(date -d '+1 day 05:00' +%s)
+		daybegins=$(( today + 23*60*60 ))
 		#daybegins=$(date -d '+20 second' +%s)
 		echo "New day ! "
 		echo "$daybegins" > $dayTimePath
@@ -38,7 +38,7 @@ while true; do
 	if (( today > weeklimit ));
 	then
 		echo "New week ! "
-		weekbegins=$(date -d 'Monday' +%s)
+		weekbegins=$(( today + 6*24*60*60))
 		#weekbegins=$(date -d '+40 second' +%s)
 		echo "$weekbegins" > $weekTimePath
 		weektime=0

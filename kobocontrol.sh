@@ -11,26 +11,34 @@ requestPath="/mnt/onboard/request.txt"
 infosPath="/mnt/onboard/infos.txt"
 maxMinutesPerWeek=$((60*60))
 maxMinutesPerDay=$((8*60))
-rootpassDelayInHours=24
+maxhour=23
+minhour=5
+rootpassDelayInHours=48
 wifiDelayInMinutes=30
 i=0
-while (( i < 10 )); do
+while [ "0" -le "10" ]; do
 	sleep 1s
 	#sleep 1s
 	i=$((i+1))
 	weektime=$(cat "$weekPath")
 	daytime=$(cat "$dayPath")
-	if (( i%60 == 0 )); then
+	if [ $(( i % 60 )) -eq 0 ]; then
 		weektime=$((weektime+1))
 		daytime=$((daytime+1))
 	fi
 	today=$(cat /sys/class/rtc/rtc0/since_epoch)
+	hour=$(date -D "$today" -u "+%H" | sed 's/^0*//')
+	hour=$(( hour + 2 ))
 	daylimit=$(cat "$dayTimePath")
 	weeklimit=$(cat "$weekTimePath")
 	request=$(cat  "$requestPath")
 	requesttype=$(cat  "$requestTypePath")
 
-	if (( today > daylimit )) ;
+
+	echo "$hour week : $weektime day : $daytime"
+	echo "week : $weeklimit  day : $daylimit today : $today" 
+
+	if [ $(( today > daylimit )) -eq 1 ] ;
 	then
 		daybegins=$(( today + 23*60*60 ))
 		echo "New day ! "
@@ -38,7 +46,8 @@ while (( i < 10 )); do
 		daytime=0
 	fi
 
-	if (( today > weeklimit ));
+
+	if [ $(( today > weeklimit )) -eq 1 ];
 	then
 		echo "New week ! "
 		weekbegins=$(( today + 6*24*60*60))
@@ -46,18 +55,31 @@ while (( i < 10 )); do
 		weektime=0
 	fi
 
-	if (( daytime > maxMinutesPerDay )); then
+	if [ $(( hour < minhour )) -eq 1 ];
+	then
+		echo "time limit reached !!!!"
+		sleep 1m
+		poweroff
+	fi
+	if [ $(( hour >= maxhour )) -eq 1 ];
+	then
+		echo "time limit reached !!!!"
+		sleep 1m
+		poweroff
+	fi
+	if [ $(( daytime > maxMinutesPerDay )) -eq 1 ]; then
 		echo "day time limit reached !!!!"
-		sleep 2m
+		sleep 1m
 		poweroff
 	fi
 
-	if (( weektime > maxMinutesPerWeek )); then
+	if [ $(( weektime > maxMinutesPerWeek )) -eq 1 ]; then
 		echo "week time limit reached !!!!"	
 		su -lp 2000 -c 'cmd notification post -S bigtext -t "time" "tag" "day times up"'
-		sleep 2m
+		sleep 1m
 		poweroff
 	fi
+	
 
 	if echo "$request" | grep -q "please password"; then
 		echo "root password requested ! "
@@ -95,8 +117,8 @@ while (( i < 10 )); do
 	fi
 	echo "$weektime" > $weekPath
 	echo "$daytime" > $dayPath
-	echo "week : $weektime day : $daytime"
-	echo "week : $weektime / $maxMinutesPerWeek day : $daytime / $maxMinutesPerDay" > $infosPath
+	echo "$hour week : $weektime / $maxMinutesPerWeek day : $daytime / $maxMinutesPerDay" > $infosPath
 	echo "week : $weeklimit  day : $daylimit today : $today" >> $infosPath
 done
+
 

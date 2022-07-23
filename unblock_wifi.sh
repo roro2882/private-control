@@ -1,1 +1,1 @@
-rfkill unblock all
+systemctl enable --now NetworkManager

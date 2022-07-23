@@ -13,6 +13,8 @@ maxMinutesPerWeek=$((6*60))
 maxMinutesPerDay=$((2*60))
 rootpassDelayInHours=24
 wifiDelayInMinutes=30
+sleep 1m
+bash ${homePath}block_wifi_android.sh
 i=0
 while true; do
 	sleep 1s
@@ -34,7 +36,7 @@ while true; do
 
 	if (( today > daylimit )) ;
 	then
-		daybegins=$(( today + 23*60*60 ))
+		daybegins=$(( today + 22*60*60 ))
 		echo "New day ! "
 		echo "$daybegins" > $dayTimePath
 		daytime=0
@@ -98,7 +100,7 @@ while true; do
 			echo "request wifi"
 			goodtime=$((today - wifiDelayInMinutes*60))
 			if (( goodtime > requesttime )); then
-				bash ${homePath}unblock_wifi.sh
+				bash ${homePath}unblock_wifi_android.sh
 				echo "wifi activated">$requestPath
 			else
 				echo "request received : $goodtime : $requesttime" > $requestPath

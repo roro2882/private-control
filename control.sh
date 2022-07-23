@@ -13,13 +13,19 @@ maxMinutesPerWeek=$((15*60))
 maxMinutesPerDay=$((3*60))
 rootpassDelayInHours=3
 wifiDelayInHours=1
+i=0
+sleep 1m
 while true; do
-	sleep 1m
-	#sleep 1s
+	sleep 1s
+	if xbacklight -get | grep -q -v "0.000"; then
+		i=$((i+1))
+	fi
 	weektime=$(cat "$weekPath")
 	daytime=$(cat "$dayPath")
-	weektime=$((weektime+1))
-	daytime=$((daytime+1))
+	if (( i%60 == 0 )); then
+		weektime=$((weektime+1))
+		daytime=$((daytime+1))
+	fi
 	today=$(date +%s)
 	daylimit=$(cat "$dayTimePath")
 	weeklimit=$(cat "$weekTimePath")
@@ -46,22 +52,22 @@ while true; do
 
 	if (( daytime > maxMinutesPerDay )); then
 		echo "day time limit reached !!!!"
-		xbacklight 0
+		xbacklight -set 0
 		sleep 1
-		xbacklight 10
+		xbacklight -set 10
 		sleep 1 
-		xbacklight 50
+		xbacklight -set 50
 		sleep 1m
 		shutdown 0
 	fi
 
 	if (( weektime > maxMinutesPerWeek )); then
 		echo "week time limit reached !!!!"	
-		xbacklight 0
+		xbacklight -set 0
 		sleep 1
-		xbacklight 10
+		xbacklight -set 10
 		sleep 1 
-		xbacklight 50
+		xbacklight -set 50
 		sleep 1m
 		shutdown 0
 	fi
@@ -79,6 +85,12 @@ while true; do
 		requesttime=$(date +%s)
 		echo "wifi" > $requestTypePath
 		echo "$requesttime" > $requestTimePath
+
+	elif echo "$request" | grep -q "please block wifi"; then
+		echo "block wifi requested ! "
+		echo "request received" > $requestPath
+		bash ${homePath}block_wifi.sh
+	
 
 	elif echo "$request" | grep -q "request received"; then
 		echo "request pending"

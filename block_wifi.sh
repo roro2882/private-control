@@ -1,2 +1,2 @@
-rfkill block all
+systemctl disable --now NetworkManager
 #chmod o=rx /usr/bin/rfkill

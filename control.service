@@ -2,7 +2,7 @@
 Description=Control
  
 [Service]
-ExecStart=/root/newcontrol.sh
+ExecStart=/root/control.sh
  
 [Install]
 WantedBy=multi-user.target

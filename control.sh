@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/bash
 homePath="/root/"
 weekPath="${homePath}control/weeklycount.txt"
 dayPath="${homePath}control/dailycount.txt"
@@ -17,7 +17,8 @@ i=0
 sleep 1m
 while true; do
 	sleep 1s
-	if xbacklight -get | grep -q -v "0.000"; then
+	backlight=$(cat /sys/class/backlight/intel_backlight/brightness)
+	if (( backlight != 0 )); then
 		i=$((i+1))
 	fi
 	weektime=$(cat "$weekPath")
@@ -25,6 +26,7 @@ while true; do
 	if (( i%60 == 0 )); then
 		weektime=$((weektime+1))
 		daytime=$((daytime+1))
+		i=$((i+1))
 	fi
 	today=$(date +%s)
 	daylimit=$(cat "$dayTimePath")
@@ -52,22 +54,18 @@ while true; do
 
 	if (( daytime > maxMinutesPerDay )); then
 		echo "day time limit reached !!!!"
-		xbacklight -set 0
-		sleep 1
-		xbacklight -set 10
+		echo 0 > /sys/class/backlight/intel_backlight/brightness
 		sleep 1 
-		xbacklight -set 50
+		echo 500 > /sys/class/backlight/intel_backlight/brightness
 		sleep 1m
 		shutdown 0
 	fi
 
 	if (( weektime > maxMinutesPerWeek )); then
 		echo "week time limit reached !!!!"	
-		xbacklight -set 0
-		sleep 1
-		xbacklight -set 10
+		echo 0 > /sys/class/backlight/intel_backlight/brightness
 		sleep 1 
-		xbacklight -set 50
+		echo 500 > /sys/class/backlight/intel_backlight/brightness
 		sleep 1m
 		shutdown 0
 	fi
